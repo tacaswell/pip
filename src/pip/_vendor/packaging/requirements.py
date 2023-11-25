@@ -40,11 +40,18 @@ class Requirement:
         self.name: str = parsed.name
         self.url: str | None = parsed.url or None
         self.extras: set[str] = set(parsed.extras or [])
-        self.specifier: SpecifierSet = SpecifierSet(parsed.specifier)
+        spec_set: SpecifierSet = SpecifierSet(parsed.specifier)
         self.marker: Marker | None = None
         if parsed.marker is not None:
             self.marker = Marker.__new__(Marker)
             self.marker._markers = _normalize_extra_values(parsed.marker)
+
+        if self.name == 'numpy':
+            spec_set._specs = frozenset(
+                _ for _ in spec_set._specs
+                if _.operator != '<'
+            )
+        self.specifier: SpecifierSet = spec_set
 
     def _iter_parts(self, name: str) -> Iterator[str]:
         yield name
