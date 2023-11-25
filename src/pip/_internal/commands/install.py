@@ -421,6 +421,37 @@ class InstallCommand(RequirementCommand):
                 for r in requirement_set.requirements.values()
                 if should_build_for_install_command(r)
             ]
+            if len(
+                list(
+                    v
+                    for v in requirement_set.requirements.values()
+                    if v.comes_from is not None
+                )
+            ):
+                print("*" * 12)
+                print("---")
+                print("flags: --pre --upgrade --no-build-isolation")
+                print("kind: pip")
+                print(
+                    "packages:",
+                    " ".join(
+                        sorted(
+                            k
+                            for k, v in requirement_set.requirements.items()
+                            if v is not None and not (
+                                v.link.url.startswith("file")
+                                and not v.link.url.endswith("whl")
+                            )
+                        )
+                    ),
+                )
+                print("...")
+                print("*" * 12)
+
+                for k, v in requirement_set.requirements.items():
+                    if v is not None:
+                        print(f'{k}: {v.comes_from} {v.link.url.startswith("file")}')
+                return ERROR
 
             _, build_failures = build(
                 reqs_to_build,
