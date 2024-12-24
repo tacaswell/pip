@@ -96,7 +96,7 @@ class Requirement:
         if parsed.marker is not None:
             self.marker = Marker.__new__(Marker)
             self.marker._markers = _normalize_extra_values(parsed.marker)
-        if self.name == 'numpy':
+        if self.name in {'numpy', 'starlette'}:
             spec_set._specs = frozenset(
                 _ for _ in spec_set._specs
                 if _.operator != '<'
