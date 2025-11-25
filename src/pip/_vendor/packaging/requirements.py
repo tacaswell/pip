@@ -96,10 +96,15 @@ class Requirement:
         if parsed.marker is not None:
             self.marker = Marker.__new__(Marker)
             self.marker._markers = _normalize_extra_values(parsed.marker)
-        if self.name in {'numpy', 'starlette', 'importlib-metadata', 'httpx'}:
+        if self.name in {'numpy', 'starlette', 'importlib-metadata', 'httpx', 'wrapt'}:
             spec_set._specs = frozenset(
                 _ for _ in spec_set._specs
                 if _.operator != '<'
+            )
+        if self.name in {'dask'}:
+            spec_set._specs = frozenset(
+                _ for _ in spec_set._specs
+                if _.operator != '=='
             )
         self.specifier: SpecifierSet = spec_set
 
