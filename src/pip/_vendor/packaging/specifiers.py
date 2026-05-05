@@ -983,7 +983,10 @@ class SpecifierSet(BaseSpecifier):
             return NotImplemented
 
         specifier = SpecifierSet()
-        specifier._specs = self._specs + other._specs
+        specifier._specs = tuple(
+            dict.fromkeys(sorted(self._specs + tuple(other._specs), key=str))
+        )
+
         specifier._canonicalized = len(specifier._specs) <= 1
         specifier._has_arbitrary = self._has_arbitrary or other._has_arbitrary
 
